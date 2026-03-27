@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MasterClass Browse — Rich Preview Cards Mock</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0a0a0a;
+    color: #fff;
+    min-height: 100vh;
+  }
+
+  /* Top nav bar */
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 32px;
+    background: #111;
+    border-bottom: 1px solid #222;
+  }
+  .navbar .logo {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #e53935;
+  }
+  .nav-links { display: flex; gap: 24px; align-items: center; }
+  .nav-links a { color: #aaa; text-decoration: none; font-size: 14px; }
+  .nav-links a:hover { color: #fff; }
+  .btn-get {
+    background: #e53935;
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* Browse trigger */
+  .browse-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 32px;
+    background: #111;
+  }
+  .browse-btn {
+    background: #222;
+    color: #fff;
+    border: 1px solid #444;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .browse-btn:hover { background: #333; }
+  .browse-btn .arrow { font-size: 10px; transition: transform 0.2s; }
+  .browse-btn.open .arrow { transform: rotate(180deg); }
+
+  .search-box {
+    flex: 1;
+    max-width: 400px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 10px 16px;
+    color: #888;
+    font-size: 14px;
+  }
+
+  /* Mega menu */
+  .mega-menu {
+    display: none;
+    position: absolute;
+    top: 112px;
+    left: 32px;
+    right: 32px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 12px;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+    z-index: 100;
+    overflow: hidden;
+  }
+  .mega-menu.open { display: flex; }
+
+  /* Left panel — categories */
+  .categories-panel {
+    width: 260px;
+    border-right: 1px solid #2a2a2a;
+    padding: 8px 0;
+    flex-shrink: 0;
+    max-height: 520px;
+    overflow-y: auto;
+  }
+  .category-item {
+    padding: 11px 20px;
+    font-size: 14px;
+    color: #ccc;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.15s, color 0.15s;
+  }
+  .category-item:hover, .category-item.active {
+    background: #e53935;
+    color: #fff;
+  }
+  .category-item .chevron { font-size: 11px; opacity: 0.6; }
+
+  /* Middle panel — subcategories */
+  .subcategories-panel {
+    width: 300px;
+    border-right: 1px solid #2a2a2a;
+    padding: 8px 0;
+    flex-shrink: 0;
+    max-height: 520px;
+    overflow-y: auto;
+  }
+  .subcategory-item {
+    padding: 11px 20px;
+    font-size: 14px;
+    color: #ccc;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.15s;
+  }
+  .subcategory-item:hover, .subcategory-item.active {
+    background: #252525;
+    color: #fff;
+  }
+  .subcategory-item .count {
+    font-size: 12px;
+    color: #666;
+    margin-left: 8px;
+  }
+  .subcategory-item .chevron { font-size: 11px; opacity: 0.4; }
+
+  /* Right panel — class cards */
+  .classes-panel {
+    flex: 1;
+    padding: 12px 16px;
+    max-height: 520px;
+    overflow-y: auto;
+    position: relative;
+  }
+  .classes-panel-header {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #666;
+    margin-bottom: 12px;
+    padding: 0 4px;
+  }
+
+  /* Class card */
+  .class-card {
+    display: flex;
+    gap: 14px;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+    position: relative;
+  }
+  .class-card:hover {
+    background: #252525;
+  }
+  .class-card .thumbnail {
+    width: 120px;
+    height: 68px;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #333;
+    position: relative;
+  }
+  .class-card .thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .class-card .badge {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    background: #e53935;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+  .class-card .badge.new { background: #2196F3; }
+  .class-card .card-info { flex: 1; min-width: 0; }
+  .class-card .instructor-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+  .class-card .class-title {
+    font-size: 13px;
+    color: #999;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .class-card .meta {
+    font-size: 11px;
+    color: #666;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .class-card .meta span { display: flex; align-items: center; gap: 3px; }
+  .class-card .bookmark-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #555;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 4px;
+    transition: color 0.15s;
+    line-height: 1;
+  }
+  .class-card .bookmark-btn:hover { color: #e53935; }
+  .class-card .bookmark-btn.saved { color: #e53935; }
+
+  /* Expanded preview on hover */
+  .class-card .preview-expand {
+    display: none;
+    padding-top: 10px;
+    border-top: 1px solid #333;
+    margin-top: 10px;
+  }
+  .class-card:hover .preview-expand,
+  .class-card.focused .preview-expand {
+    display: block;
+  }
+  .preview-expand .description {
+    font-size: 13px;
+    color: #aaa;
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .preview-expand .lessons-preview {
+    font-size: 12px;
+    color: #777;
+    margin-bottom: 10px;
+  }
+  .preview-expand .lessons-preview strong { color: #999; }
+  .preview-expand .preview-actions {
+    display: flex;
+    gap: 10px;
+  }
+  .preview-expand .btn-preview-trailer {
+    background: rgba(229, 57, 53, 0.15);
+    color: #e53935;
+    border: 1px solid rgba(229, 57, 53, 0.3);
+    padding: 6px 14px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .preview-expand .btn-preview-trailer:hover {
+    background: rgba(229, 57, 53, 0.25);
+  }
+  .preview-expand .btn-view-class {
+    background: #e53935;
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .view-all-bar {
+    padding: 12px 16px;
+    border-top: 1px solid #2a2a2a;
+    text-align: center;
+  }
+  .view-all-bar a {
+    color: #e53935;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .view-all-bar a:hover { text-decoration: underline; }
+
+  /* Backdrop */
+  .backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 50;
+  }
+  .backdrop.open { display: block; }
+
+  /* Instruction banner */
+  .instruction {
+    text-align: center;
+    padding: 80px 32px 24px;
+    color: #555;
+    font-size: 15px;
+  }
+  .instruction strong { color: #888; }
+
+  /* Mobile back button */
+  .mobile-back {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #e53935;
+    cursor: pointer;
+    border-bottom: 1px solid #2a2a2a;
+    background: #1a1a1a;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+  .mobile-back .back-arrow { font-size: 16px; }
+  .mobile-back .back-label { color: #e53935; }
+
+  /* Mobile panel title */
+  .mobile-panel-title {
+    display: none;
+    padding: 16px 20px 8px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #555;
+    font-weight: 600;
+  }
+
+  /* Device toggle (for demo purposes) */
+  .device-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 200;
+    display: flex;
+    gap: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  }
+  .device-toggle button {
+    background: #222;
+    color: #888;
+    border: 1px solid #444;
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .device-toggle button:first-child { border-right: none; border-radius: 8px 0 0 8px; }
+  .device-toggle button:last-child { border-radius: 0 8px 8px 0; }
+  .device-toggle button.active { background: #e53935; color: #fff; border-color: #e53935; }
+
+  /* Mobile simulation wrapper */
+  .mobile-frame {
+    display: none;
+    width: 390px;
+    height: 844px;
+    margin: 40px auto;
+    border: 3px solid #333;
+    border-radius: 40px;
+    overflow: hidden;
+    background: #0a0a0a;
+    position: relative;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  }
+  .mobile-frame .mobile-notch {
+    width: 160px;
+    height: 30px;
+    background: #000;
+    border-radius: 0 0 20px 20px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
+  }
+  .mobile-frame .mobile-content {
+    height: calc(100% - 30px);
+    overflow-y: auto;
+    position: relative;
+  }
+  body.mobile-mode .mobile-frame { display: block; }
+  body.mobile-mode .navbar,
+  body.mobile-mode .browse-bar,
+  body.mobile-mode .backdrop,
+  body.mobile-mode .mega-menu,
+  body.mobile-mode > .instruction { display: none !important; }
+
+  /* Mobile internal styles */
+  .m-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: #111;
+    border-bottom: 1px solid #222;
+  }
+  .m-navbar .logo { font-size: 16px; font-weight: 700; color: #e53935; letter-spacing: 1px; }
+  .m-navbar .m-nav-icons { display: flex; gap: 16px; }
+  .m-navbar .m-nav-icons a { color: #aaa; text-decoration: none; font-size: 13px; }
+
+  .m-browse-bar {
+    display: flex; gap: 10px; padding: 12px 16px; background: #111;
+  }
+  .m-browse-btn {
+    background: #222; color: #fff; border: 1px solid #444;
+    padding: 10px 16px; border-radius: 6px; font-size: 13px; font-weight: 600;
+    cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap;
+  }
+  .m-search-box {
+    flex: 1; background: #1a1a1a; border: 1px solid #333; border-radius: 6px;
+    padding: 10px 12px; color: #888; font-size: 13px;
+  }
+
+  /* Mobile full-screen drawer */
+  .m-drawer {
+    position: absolute;
+    inset: 0;
+    background: #1a1a1a;
+    z-index: 100;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .m-drawer.open { display: flex; }
+
+  .m-drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: #111;
+    border-bottom: 1px solid #2a2a2a;
+    flex-shrink: 0;
+  }
+  .m-drawer-header .m-drawer-title { font-size: 16px; font-weight: 600; }
+  .m-drawer-close {
+    background: none; border: none; color: #888; font-size: 24px; cursor: pointer; padding: 4px;
+  }
+
+  .m-drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Drill-down panels within drawer */
+  .m-panel { display: none; flex-direction: column; }
+  .m-panel.active { display: flex; }
+
+  .m-panel-back {
+    display: flex; align-items: center; gap: 8px;
+    padding: 14px 16px; font-size: 14px; font-weight: 600; color: #e53935;
+    cursor: pointer; border-bottom: 1px solid #2a2a2a; background: #1a1a1a;
+    position: sticky; top: 0; z-index: 2; flex-shrink: 0;
+  }
+
+  .m-panel-label {
+    padding: 14px 16px 8px;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px;
+    color: #555; font-weight: 600;
+  }
+
+  .m-list-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 16px; font-size: 15px; color: #ccc;
+    cursor: pointer; border-bottom: 1px solid #222;
+    transition: background 0.15s;
+    -webkit-tap-highlight-color: rgba(229, 57, 53, 0.15);
+  }
+  .m-list-item:active { background: #252525; }
+  .m-list-item .m-item-right {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .m-list-item .m-count { color: #555; font-size: 13px; }
+  .m-list-item .m-chevron { color: #444; font-size: 14px; }
+
+  /* Mobile class cards */
+  .m-class-card {
+    padding: 16px;
+    border-bottom: 1px solid #2a2a2a;
+  }
+  .m-class-card-top {
+    display: flex; gap: 12px; margin-bottom: 10px;
+  }
+  .m-class-thumb {
+    width: 110px; height: 62px; border-radius: 6px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .m-class-thumb .badge {
+    position: absolute; top: 4px; left: 4px;
+    background: #e53935; color: #fff; font-size: 9px; font-weight: 700;
+    text-transform: uppercase; padding: 2px 6px; border-radius: 3px;
+  }
+  .m-class-thumb .badge.new { background: #2196F3; }
+  .m-class-info { flex: 1; min-width: 0; }
+  .m-class-info .name { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+  .m-class-info .title { font-size: 13px; color: #999; margin-bottom: 4px; }
+  .m-class-info .meta { font-size: 11px; color: #666; display: flex; gap: 10px; }
+
+  .m-class-desc {
+    font-size: 13px; color: #aaa; line-height: 1.5; margin-bottom: 8px;
+  }
+  .m-class-lessons {
+    font-size: 12px; color: #777; margin-bottom: 12px;
+  }
+  .m-class-lessons strong { color: #999; }
+  .m-class-actions {
+    display: flex; gap: 10px;
+  }
+  .m-class-actions .btn-trailer {
+    flex: 1; background: rgba(229, 57, 53, 0.15); color: #e53935;
+    border: 1px solid rgba(229, 57, 53, 0.3); padding: 10px; border-radius: 6px;
+    font-size: 13px; font-weight: 600; cursor: pointer; text-align: center;
+  }
+  .m-class-actions .btn-view {
+    flex: 1; background: #e53935; color: #fff; border: none;
+    padding: 10px; border-radius: 6px; font-size: 13px; font-weight: 600;
+    cursor: pointer; text-align: center;
+  }
+  .m-class-bookmark {
+    position: absolute; top: 16px; right: 16px;
+    background: none; border: none; color: #555; font-size: 20px; cursor: pointer;
+  }
+
+  .m-view-all {
+    padding: 16px; text-align: center;
+  }
+  .m-view-all a {
+    color: #e53935; font-size: 14px; font-weight: 600; text-decoration: none;
+  }
+
+  .m-instruction {
+    text-align: center; padding: 60px 24px; color: #555; font-size: 14px;
+  }
+  .m-instruction strong { color: #888; }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">MasterClass</div>
+  <div class="nav-links">
+    <a href="#">Certificates</a>
+    <a href="#">On Call</a>
+    <a href="#">At Work</a>
+    <a href="#">Log In</a>
+    <button class="btn-get">Get MasterClass</button>
+  </div>
+</nav>
+
+<div class="browse-bar">
+  <button class="browse-btn" id="browseToggle">
+    Browse <span class="arrow">&#9660;</span>
+  </button>
+  <input class="search-box" placeholder="What do you want to learn today?" readonly>
+</div>
+
+<div class="backdrop" id="backdrop"></div>
+
+<div class="mega-menu" id="megaMenu">
+  <!-- Categories -->
+  <div class="categories-panel" id="categoriesPanel"></div>
+
+  <!-- Subcategories -->
+  <div class="subcategories-panel" id="subcategoriesPanel"></div>
+
+  <!-- Class cards -->
+  <div class="classes-panel" id="classesPanel">
+    <div class="classes-panel-header">Classes</div>
+    <div id="classCards"></div>
+    <div class="view-all-bar">
+      <a href="#">View All 16 Classes &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<div class="instruction">
+  <strong>Click "Browse"</strong> to open the improved category picker. Hover over categories, subcategories, and class cards to see the rich preview interaction.
+</div>
+
+<!-- Mobile simulation frame -->
+<div class="mobile-frame" id="mobileFrame">
+  <div class="mobile-notch"></div>
+  <div class="mobile-content">
+    <nav class="m-navbar">
+      <div class="logo">MasterClass</div>
+      <div class="m-nav-icons">
+        <a href="#">Log In</a>
+      </div>
+    </nav>
+    <div class="m-browse-bar">
+      <button class="m-browse-btn" id="mBrowseToggle">Browse ▾</button>
+      <input class="m-search-box" placeholder="Search classes..." readonly>
+    </div>
+
+    <div class="m-instruction" id="mInstruction">
+      <strong>Tap "Browse"</strong> to open the mobile category picker. Tap through categories → subcategories → classes.
+    </div>
+
+    <!-- Full-screen drawer -->
+    <div class="m-drawer" id="mDrawer">
+      <div class="m-drawer-header">
+        <span class="m-drawer-title">Browse</span>
+        <button class="m-drawer-close" id="mDrawerClose">×</button>
+      </div>
+      <div class="m-drawer-body" id="mDrawerBody">
+        <!-- Panel: Categories -->
+        <div class="m-panel active" id="mPanelCategories">
+          <div class="m-panel-label">Categories</div>
+          <div id="mCategoryList"></div>
+        </div>
+
+        <!-- Panel: Subcategories -->
+        <div class="m-panel" id="mPanelSubcategories">
+          <div class="m-panel-back" id="mBackToCategories">‹ Categories</div>
+          <div class="m-panel-label" id="mSubcategoryLabel">Subcategories</div>
+          <div id="mSubcategoryList"></div>
+        </div>
+
+        <!-- Panel: Classes -->
+        <div class="m-panel" id="mPanelClasses">
+          <div class="m-panel-back" id="mBackToSubcategories">‹ Back</div>
+          <div class="m-panel-label" id="mClassesLabel">Classes</div>
+          <div id="mClassList"></div>
+          <div class="m-view-all"><a href="#">View All Classes →</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Device toggle -->
+<div class="device-toggle">
+  <button class="active" id="toggleDesktop">Desktop</button>
+  <button id="toggleMobile">Mobile</button>
+</div>
+
+<script>
+const DATA = {
+  categories: [
+    {
+      name: "Acting & Performing Arts",
+      subcategories: [
+        { name: "Master Acting Techniques", count: 5 },
+        { name: "Comedy & Improv", count: 3 },
+        { name: "Voice & Stage Presence", count: 4 }
+      ]
+    },
+    {
+      name: "Business & Entrepreneurship",
+      subcategories: [
+        { name: "Build Your Own Brand or Startup", count: 4 },
+        { name: "Communicate Effectively & Work in Teams", count: 3 },
+        { name: "Get Familiar With Finance & Investing", count: 5 },
+        { name: "Grow With Branding & Marketing Tactics", count: 3 },
+        { name: "Improve Your Public Speaking Skills", count: 2 },
+        { name: "Innovate & Think Creatively in Business", count: 4 },
+        { name: "Lead Teams to Success", count: 3 },
+        { name: "Negotiate & Persuade Like a Pro", count: 2 },
+        { name: "Set Goals & Manage Time Effectively", count: 3 }
+      ]
+    },
+    {
+      name: "Art & Design",
+      subcategories: [
+        { name: "Photography Fundamentals", count: 4 },
+        { name: "Graphic Design & Illustration", count: 3 },
+        { name: "Interior Design", count: 2 }
+      ]
+    },
+    {
+      name: "Community & Government",
+      subcategories: [
+        { name: "Civic Leadership", count: 2 },
+        { name: "Social Impact", count: 3 }
+      ]
+    },
+    {
+      name: "Film & TV",
+      subcategories: [
+        { name: "Directing & Filmmaking", count: 4 },
+        { name: "Screenwriting", count: 3 },
+        { name: "Cinematography", count: 2 }
+      ]
+    },
+    {
+      name: "Food & Drink",
+      subcategories: [
+        { name: "Cooking Techniques", count: 5 },
+        { name: "Baking & Pastry", count: 3 },
+        { name: "Wine & Mixology", count: 2 }
+      ]
+    },
+    {
+      name: "Games & Digital Media",
+      subcategories: [
+        { name: "Game Design", count: 3 },
+        { name: "Streaming & Content", count: 2 }
+      ]
+    },
+    {
+      name: "Health & Wellness",
+      subcategories: [
+        { name: "Mindfulness & Meditation", count: 3 },
+        { name: "Fitness & Nutrition", count: 4 }
+      ]
+    },
+    {
+      name: "Music",
+      subcategories: [
+        { name: "Songwriting & Production", count: 4 },
+        { name: "Instruments & Performance", count: 5 }
+      ]
+    },
+    {
+      name: "Science & Technology",
+      subcategories: [
+        { name: "Space & Exploration", count: 2 },
+        { name: "AI & Innovation", count: 3 }
+      ]
+    },
+    {
+      name: "Sports & Athletics",
+      subcategories: [
+        { name: "Training & Mindset", count: 4 },
+        { name: "Strategy & Leadership", count: 3 }
+      ]
+    },
+    {
+      name: "Writing",
+      subcategories: [
+        { name: "Fiction & Storytelling", count: 5 },
+        { name: "Nonfiction & Memoir", count: 3 },
+        { name: "Poetry & Lyrics", count: 2 }
+      ]
+    }
+  ],
+  // Sample class data keyed by subcategory name
+  classes: {
+    "Build Your Own Brand or Startup": [
+      {
+        instructor: "Mark Cuban",
+        title: "Win Big in Business",
+        lessons: 11, duration: "2h 45m",
+        badge: "Popular",
+        description: "Billionaire entrepreneur Mark Cuban shares his tactics for reducing risk, building a competitive edge, and mastering negotiation and sales.",
+        sampleLessons: ["Finding Your Edge", "The Art of the Sale", "Building Your Brand", "Managing Risk"]
+      },
+      {
+        instructor: "Sara Blakely",
+        title: "Self-Made Entrepreneurship",
+        lessons: 13, duration: "3h 10m",
+        badge: "New",
+        description: "Spanx founder Sara Blakely teaches you how to turn an idea into a product, navigate early challenges, and build a brand that lasts.",
+        sampleLessons: ["The Idea Phase", "Prototyping on a Budget", "Pitching Investors", "Scaling Up"]
+      },
+      {
+        instructor: "Richard Branson",
+        title: "Disruptive Entrepreneurship",
+        lessons: 14, duration: "2h 55m",
+        badge: null,
+        description: "Virgin Group founder Richard Branson teaches you how to challenge norms, take bold risks, and build businesses that change industries.",
+        sampleLessons: ["Challenging the Status Quo", "Brand Building", "Leading with Purpose", "Adventure & Business"]
+      },
+      {
+        instructor: "Alexis Ohanian",
+        title: "Building Your Startup",
+        lessons: 10, duration: "2h 20m",
+        badge: null,
+        description: "Reddit co-founder Alexis Ohanian walks you through the startup playbook — from identifying opportunities to building communities at scale.",
+        sampleLessons: ["Spotting Opportunity", "Community-First Growth", "Fundraising 101", "Scaling Your Team"]
+      }
+    ],
+    "default": [
+      {
+        instructor: "Sample Instructor",
+        title: "Sample Class Title",
+        lessons: 10, duration: "2h 30m",
+        badge: null,
+        description: "This is a sample class description showing how the rich preview card would look for any category.",
+        sampleLessons: ["Lesson One", "Lesson Two", "Lesson Three"]
+      }
+    ]
+  }
+};
+
+// Placeholder thumbnails using colored gradients
+const GRADIENTS = [
+  "linear-gradient(135deg, #1a1a2e, #16213e)",
+  "linear-gradient(135deg, #0f3460, #533483)",
+  "linear-gradient(135deg, #2c003e, #512b58)",
+  "linear-gradient(135deg, #1b262c, #0f4c75)",
+  "linear-gradient(135deg, #2d132c, #801336)",
+  "linear-gradient(135deg, #1a1a2e, #e94560)"
+];
+
+const categoriesPanel = document.getElementById('categoriesPanel');
+const subcategoriesPanel = document.getElementById('subcategoriesPanel');
+const classCards = document.getElementById('classCards');
+const megaMenu = document.getElementById('megaMenu');
+const backdrop = document.getElementById('backdrop');
+const browseToggle = document.getElementById('browseToggle');
+
+let activeCategory = null;
+let activeSubcategory = null;
+
+// Render categories
+function renderCategories() {
+  categoriesPanel.innerHTML = '';
+  DATA.categories.forEach((cat, i) => {
+    const el = document.createElement('div');
+    el.className = 'category-item' + (i === 1 ? ' active' : '');
+    el.innerHTML = `${cat.name} <span class="chevron">›</span>`;
+    el.addEventListener('mouseenter', () => selectCategory(i));
+    categoriesPanel.appendChild(el);
+  });
+  selectCategory(1); // default to Business
+}
+
+function selectCategory(index) {
+  activeCategory = index;
+  document.querySelectorAll('.category-item').forEach((el, i) => {
+    el.classList.toggle('active', i === index);
+  });
+  renderSubcategories(DATA.categories[index].subcategories);
+}
+
+function renderSubcategories(subs) {
+  subcategoriesPanel.innerHTML = '';
+  subs.forEach((sub, i) => {
+    const el = document.createElement('div');
+    el.className = 'subcategory-item' + (i === 0 ? ' active' : '');
+    el.innerHTML = `${sub.name}<span class="count">${sub.count}</span> <span class="chevron">›</span>`;
+    el.addEventListener('mouseenter', () => selectSubcategory(i, sub.name));
+    subcategoriesPanel.appendChild(el);
+  });
+  selectSubcategory(0, subs[0].name);
+}
+
+function selectSubcategory(index, name) {
+  activeSubcategory = name;
+  document.querySelectorAll('.subcategory-item').forEach((el, i) => {
+    el.classList.toggle('active', i === index);
+  });
+  renderClasses(name);
+}
+
+function renderClasses(subcategoryName) {
+  const classes = DATA.classes[subcategoryName] || DATA.classes["default"];
+  classCards.innerHTML = '';
+  classes.forEach((cls, i) => {
+    const card = document.createElement('div');
+    card.className = 'class-card';
+    const gradient = GRADIENTS[i % GRADIENTS.length];
+    const badgeHTML = cls.badge
+      ? `<span class="badge ${cls.badge === 'New' ? 'new' : ''}">${cls.badge}</span>`
+      : '';
+    const initials = cls.instructor.split(' ').map(w => w[0]).join('');
+
+    card.innerHTML = `
+      <div class="thumbnail" style="background: ${gradient}; display:flex; align-items:center; justify-content:center;">
+        <span style="font-size:24px; font-weight:700; color:rgba(255,255,255,0.3);">${initials}</span>
+        ${badgeHTML}
+      </div>
+      <div class="card-info">
+        <div class="instructor-name">${cls.instructor}</div>
+        <div class="class-title">${cls.title}</div>
+        <div class="meta">
+          <span>📚 ${cls.lessons} lessons</span>
+          <span>⏱ ${cls.duration}</span>
+        </div>
+        <div class="preview-expand">
+          <div class="description">${cls.description}</div>
+          <div class="lessons-preview">
+            <strong>Lessons include:</strong> ${cls.sampleLessons.join(', ')}
+          </div>
+          <div class="preview-actions">
+            <button class="btn-preview-trailer" onclick="event.stopPropagation(); alert('Trailer would play here')">▶ Watch Trailer</button>
+            <button class="btn-view-class">View Class</button>
+          </div>
+        </div>
+      </div>
+      <button class="bookmark-btn" title="Save for later" onclick="event.stopPropagation(); this.classList.toggle('saved'); this.innerHTML = this.classList.contains('saved') ? '♥' : '♡'">♡</button>
+    `;
+    classCards.appendChild(card);
+  });
+}
+
+// Toggle menu
+function toggleMenu() {
+  const isOpen = megaMenu.classList.toggle('open');
+  backdrop.classList.toggle('open', isOpen);
+  browseToggle.classList.toggle('open', isOpen);
+}
+
+function closeMenu() {
+  megaMenu.classList.remove('open');
+  backdrop.classList.remove('open');
+  browseToggle.classList.remove('open');
+}
+
+browseToggle.addEventListener('click', toggleMenu);
+backdrop.addEventListener('click', closeMenu);
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeMenu();
+});
+
+// Init
+renderCategories();
+
+// ===== Device Toggle =====
+const toggleDesktop = document.getElementById('toggleDesktop');
+const toggleMobile = document.getElementById('toggleMobile');
+
+toggleDesktop.addEventListener('click', () => {
+  document.body.classList.remove('mobile-mode');
+  toggleDesktop.classList.add('active');
+  toggleMobile.classList.remove('active');
+});
+toggleMobile.addEventListener('click', () => {
+  document.body.classList.add('mobile-mode');
+  toggleMobile.classList.add('active');
+  toggleDesktop.classList.remove('active');
+  closeMenu(); // close desktop menu if open
+});
+
+// ===== Mobile Drawer Logic =====
+const mDrawer = document.getElementById('mDrawer');
+const mDrawerBody = document.getElementById('mDrawerBody');
+const mBrowseToggle = document.getElementById('mBrowseToggle');
+const mDrawerClose = document.getElementById('mDrawerClose');
+const mInstruction = document.getElementById('mInstruction');
+
+const mPanelCategories = document.getElementById('mPanelCategories');
+const mPanelSubcategories = document.getElementById('mPanelSubcategories');
+const mPanelClasses = document.getElementById('mPanelClasses');
+const mCategoryList = document.getElementById('mCategoryList');
+const mSubcategoryList = document.getElementById('mSubcategoryList');
+const mClassList = document.getElementById('mClassList');
+const mSubcategoryLabel = document.getElementById('mSubcategoryLabel');
+const mClassesLabel = document.getElementById('mClassesLabel');
+const mBackToCategories = document.getElementById('mBackToCategories');
+const mBackToSubcategories = document.getElementById('mBackToSubcategories');
+
+function showMobilePanel(panel) {
+  [mPanelCategories, mPanelSubcategories, mPanelClasses].forEach(p => p.classList.remove('active'));
+  panel.classList.add('active');
+  mDrawerBody.scrollTop = 0;
+}
+
+// Open/close drawer
+mBrowseToggle.addEventListener('click', () => {
+  mDrawer.classList.add('open');
+  mInstruction.style.display = 'none';
+  showMobilePanel(mPanelCategories);
+  renderMobileCategories();
+});
+mDrawerClose.addEventListener('click', () => {
+  mDrawer.classList.remove('open');
+});
+
+// Render mobile categories
+function renderMobileCategories() {
+  mCategoryList.innerHTML = '';
+  DATA.categories.forEach((cat, i) => {
+    const totalClasses = cat.subcategories.reduce((sum, s) => sum + s.count, 0);
+    const el = document.createElement('div');
+    el.className = 'm-list-item';
+    el.innerHTML = `
+      ${cat.name}
+      <span class="m-item-right">
+        <span class="m-count">${totalClasses}</span>
+        <span class="m-chevron">›</span>
+      </span>
+    `;
+    el.addEventListener('click', () => {
+      mSubcategoryLabel.textContent = cat.name;
+      renderMobileSubcategories(cat.subcategories);
+      showMobilePanel(mPanelSubcategories);
+    });
+    mCategoryList.appendChild(el);
+  });
+}
+
+// Render mobile subcategories
+let mActiveCategory = null;
+function renderMobileSubcategories(subs) {
+  mActiveCategory = subs;
+  mSubcategoryList.innerHTML = '';
+  subs.forEach((sub) => {
+    const el = document.createElement('div');
+    el.className = 'm-list-item';
+    el.innerHTML = `
+      ${sub.name}
+      <span class="m-item-right">
+        <span class="m-count">${sub.count}</span>
+        <span class="m-chevron">›</span>
+      </span>
+    `;
+    el.addEventListener('click', () => {
+      mClassesLabel.textContent = sub.name;
+      mBackToSubcategories.textContent = '‹ ' + mSubcategoryLabel.textContent;
+      renderMobileClasses(sub.name);
+      showMobilePanel(mPanelClasses);
+    });
+    mSubcategoryList.appendChild(el);
+  });
+}
+
+// Render mobile class cards (always expanded — no hover on mobile)
+function renderMobileClasses(subcategoryName) {
+  const classes = DATA.classes[subcategoryName] || DATA.classes["default"];
+  mClassList.innerHTML = '';
+  classes.forEach((cls, i) => {
+    const gradient = GRADIENTS[i % GRADIENTS.length];
+    const badgeHTML = cls.badge
+      ? `<span class="badge ${cls.badge === 'New' ? 'new' : ''}">${cls.badge}</span>`
+      : '';
+    const initials = cls.instructor.split(' ').map(w => w[0]).join('');
+
+    const card = document.createElement('div');
+    card.className = 'm-class-card';
+    card.style.position = 'relative';
+    card.innerHTML = `
+      <div class="m-class-card-top">
+        <div class="m-class-thumb" style="background: ${gradient};">
+          <span style="font-size:22px; font-weight:700; color:rgba(255,255,255,0.3);">${initials}</span>
+          ${badgeHTML}
+        </div>
+        <div class="m-class-info">
+          <div class="name">${cls.instructor}</div>
+          <div class="title">${cls.title}</div>
+          <div class="meta">
+            <span>📚 ${cls.lessons} lessons</span>
+            <span>⏱ ${cls.duration}</span>
+          </div>
+        </div>
+      </div>
+      <div class="m-class-desc">${cls.description}</div>
+      <div class="m-class-lessons">
+        <strong>Lessons include:</strong> ${cls.sampleLessons.join(', ')}
+      </div>
+      <div class="m-class-actions">
+        <button class="btn-trailer">▶ Trailer</button>
+        <button class="btn-view">View Class</button>
+      </div>
+      <button class="m-class-bookmark" onclick="event.stopPropagation(); this.textContent = this.textContent.trim() === '♡' ? '♥' : '♡'; this.style.color = this.textContent.trim() === '♥' ? '#e53935' : '#555'">♡</button>
+    `;
+    mClassList.appendChild(card);
+  });
+}
+
+// Back navigation
+mBackToCategories.addEventListener('click', () => showMobilePanel(mPanelCategories));
+mBackToSubcategories.addEventListener('click', () => showMobilePanel(mPanelSubcategories));
+</script>
+
+</body>
+</html>
